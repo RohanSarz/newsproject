@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
-class UserController extends Controller
+class UserController extends Controller implements HasMiddleware
 {
+    public static function middleware(): array
+    {
+        return [new Middleware('auth', except: ['index', 'show']), new Middleware('verified', only: ['destroy'])];
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -38,19 +46,11 @@ class UserController extends Controller
             'password' => ['required', 'min:6', 'max:255'],
         ]);
 
-        $fields['password'] = bcrypt($fields['password']);
+        $fields['password'] = Hash::make($fields['password']);
 
-        // register
+        User::create($fields);
 
-        $user = User::create($fields);
-
-        // redirect
-        return redirect()
-            ->intended('dashboard')
-            ->with('flash', [
-                'message' => 'Welcome to the fight club!',
-                'type' => 'success',
-            ]);
+        return redirect()->route('users.index');
     }
 
     /**
@@ -58,7 +58,11 @@ class UserController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->route('users.show', $id);
+        }
     }
 
     /**
@@ -66,7 +70,9 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        return inertia('Users/Edit', ['user' => $user]);
     }
 
     /**
@@ -74,7 +80,18 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        dd($request->all());
+        $fields = $request->validate([
+            'email' => ['required', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'min:6', 'max:255'],
+        ]);
+
+        $fields['password'] = Hash::make($fields['password']);
+
+        $user = User::findOrFail($id);
+        $user->update($fields);
+
+        return redirect()->route('users.index');
     }
 
     /**
@@ -83,6 +100,11 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         $user = User::find($id);
-        $user->delete();
+
+        if ($user) {
+            $user->delete();
+        }
+
+        return redirect()->route('users.index');
     }
 }

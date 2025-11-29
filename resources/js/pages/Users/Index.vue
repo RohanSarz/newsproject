@@ -2,8 +2,8 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import { create, destroy, edit, index } from '@/routes/users';
 
-import { type BreadcrumbItem } from '@/types';
-import { Head, Link } from '@inertiajs/vue3';
+import { User, type BreadcrumbItem } from '@/types';
+import { Head, Link, router } from '@inertiajs/vue3';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -12,9 +12,21 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-defineProps({
-    users: Array,
-});
+defineProps<{
+    users: User[];
+}>();
+
+function confirmDelete(userId: number) {
+    if (confirm('Are you sure you want to delete this user?')) {
+        router.delete(destroy(userId).url, {
+            preserveScroll: true,
+            preserveState: false,
+            onError: () => {
+                alert('There was an error deleting the user');
+            },
+        });
+    }
+}
 </script>
 
 <template>
@@ -31,7 +43,7 @@ defineProps({
             >
                 <div class="relative w-full overflow-auto">
                     <div
-                        class="flex items-center justify-between gap-4 bg-slate-200 p-4"
+                        class="flex items-center justify-between gap-4 bg-slate-200 p-4 dark:bg-accent/40"
                     >
                         <h1>Create a new user</h1>
                         <Link
@@ -67,7 +79,11 @@ defineProps({
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="[&_tr:last-child]:border-0">
+                        <transition-group
+                            name="users-list"
+                            tag="tbody"
+                            class="[&_tr:last-child]:border-0"
+                        >
                             <tr
                                 v-for="user in users"
                                 :key="user.id"
@@ -93,24 +109,42 @@ defineProps({
                                         :href="edit(user.id)"
                                         as="button"
                                         method="get"
-                                        class="rounded-md bg-blue-500 px-3 py-1 text-sm text-white"
+                                        class="rounded-md bg-blue-900 px-3 py-1 text-sm text-white"
                                     >
                                         Edit
                                     </Link>
                                     <Link
                                         :href="destroy(user.id).url"
+                                        preserve-scroll
                                         as="button"
                                         method="delete"
-                                        class="rounded-md bg-red-500 px-3 py-1 text-sm text-white"
+                                        class="rounded-md bg-red-900 px-3 py-1 text-sm text-white"
+                                        @click.prevent="confirmDelete(user.id)"
                                     >
                                         Delete
                                     </Link>
                                 </td>
                             </tr>
-                        </tbody>
+                        </transition-group>
                     </table>
                 </div>
             </div>
         </div>
     </AppLayout>
 </template>
+
+<style>
+.users-list-enter-active,
+.users-list-leave-active {
+    transition: all 0.3s ease;
+}
+.users-list-enter-from {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+.users-list-leave-to {
+    opacity: 0;
+    transform: translateX(20px);
+    position: absolute;
+}
+</style>
