@@ -31,7 +31,7 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
-import { dashboard } from '@/routes';
+import { dashboard, home } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
 import {
@@ -41,6 +41,9 @@ import {
     Menu,
     Search,
     User,
+    GraduationCap,
+    Users,
+    BarChart3,
 } from 'lucide-vue-next';
 import { computed } from 'vue';
 
@@ -69,15 +72,29 @@ const activeItemStyles = computed(
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
-        href: dashboard(),
+        title: 'Home',
+        href: home(),
         icon: LayoutGrid,
     },
-
     {
-        title: 'User',
-        href: '/users',
+        title: 'Catalog',
+        href: home(),
+        icon: GraduationCap,
+    },
+    {
+        title: 'Student Dashboard',
+        href: '/student',
         icon: User,
+    },
+    {
+        title: 'Instructor Dashboard',
+        href: '/instructor',
+        icon: BarChart3,
+    },
+    {
+        title: 'Users',
+        href: '/users',
+        icon: Users,
     },
 ];
 

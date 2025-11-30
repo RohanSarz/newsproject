@@ -4,6 +4,15 @@ import TextLink from '@/components/TextLink.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import AuthBase from '@/layouts/AuthLayout.vue';
 import { login } from '@/routes';
@@ -38,6 +47,27 @@ import { Form, Head } from '@inertiajs/vue3';
                         placeholder="Full name"
                     />
                     <InputError :message="errors.name" />
+                </div>
+                <div class="grid gap-2">
+                    <Label for="name">Do you want to teach or learn?</Label>
+                    <Select required name="roles">
+                        <SelectTrigger>
+                            <SelectValue placeholder="Select an option" />
+                        </SelectTrigger>
+                        <SelectContent class="w-full">
+                            <SelectGroup>
+                                <SelectLabel>Roles</SelectLabel>
+                                <SelectItem value="teacher">
+                                    Teacher
+                                </SelectItem>
+                                <SelectItem value="student">
+                                    Student
+                                </SelectItem>
+                                <SelectItem value="admin"> Admin </SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <InputError :message="errors.roles" />
                 </div>
 
                 <div class="grid gap-2">

@@ -48,7 +48,8 @@ class UserController extends Controller implements HasMiddleware
 
         $fields['password'] = Hash::make($fields['password']);
 
-        User::create($fields);
+        $user = User::create($fields);
+        $user->syncRoles(['student']);
 
         return redirect()->route('users.index');
     }

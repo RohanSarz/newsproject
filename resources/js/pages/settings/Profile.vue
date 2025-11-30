@@ -10,10 +10,18 @@ import InputError from '@/components/InputError.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
 import AppLayout from '@/layouts/AppLayout.vue';
 import SettingsLayout from '@/layouts/settings/Layout.vue';
-import { type BreadcrumbItem } from '@/types';
-
+import { User, type BreadcrumbItem } from '@/types';
 interface Props {
     mustVerifyEmail: boolean;
     status?: string;
@@ -29,7 +37,8 @@ const breadcrumbItems: BreadcrumbItem[] = [
 ];
 
 const page = usePage();
-const user = page.props.auth.user;
+const user: User = page.props.auth.user;
+const role = page.props.auth.role;
 </script>
 
 <template>
@@ -75,6 +84,32 @@ const user = page.props.auth.user;
                             placeholder="Email address"
                         />
                         <InputError class="mt-2" :message="errors.email" />
+                    </div>
+                    <div class="grid gap-2">
+                        <Label for="email">User Type - {{ role }}</Label>
+
+                        <Select
+                            :default-value="role"
+                            :disabled="role != 'admin'"
+                            name="role"
+                        >
+                            <SelectTrigger class="w-[180px]">
+                                <SelectValue placeholder="Select one" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>User Type</SelectLabel>
+                                    <SelectItem value="teacher">
+                                        Teacher
+                                    </SelectItem>
+                                    <SelectItem value="student">
+                                        Student
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+
+                        <InputError class="mt-2" :message="errors.role" />
                     </div>
 
                     <div v-if="mustVerifyEmail && !user.email_verified_at">

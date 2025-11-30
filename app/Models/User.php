@@ -41,4 +41,19 @@ class User extends Authenticatable
             'two_factor_confirmed_at' => 'datetime',
         ];
     }
+
+    protected static function booted()
+    {
+        static::created(function (User $user) {
+            // Only assign if no roles yet (safe for admin creation too)
+            if ($user->roles->isEmpty()) {
+                $user->syncRoles('student');
+            }
+        });
+    }
+
+    public function getRoles()
+    {
+        return $this->getRoleNames();
+    }
 }
