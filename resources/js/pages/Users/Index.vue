@@ -47,6 +47,7 @@ function confirmDelete(userId: number) {
                     >
                         <h1>Create a new user</h1>
                         <Link
+                            prefetch="hover"
                             :href="create()"
                             class="rounded-md bg-foreground px-4 py-1 text-accent"
                             >Create</Link
