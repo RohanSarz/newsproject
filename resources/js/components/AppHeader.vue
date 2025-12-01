@@ -31,32 +31,28 @@ import {
 import UserMenuContent from '@/components/UserMenuContent.vue';
 import { getInitials } from '@/composables/useInitials';
 import { toUrl, urlIsActive } from '@/lib/utils';
-import { dashboard, home } from '@/routes';
+import { login, register } from '@/routes';
 import type { BreadcrumbItem, NavItem } from '@/types';
 import { InertiaLinkProps, Link, usePage } from '@inertiajs/vue3';
-import {
-    BookOpen,
-    Folder,
-    LayoutGrid,
-    Menu,
-    Search,
-    User,
-    GraduationCap,
-    Users,
-    BarChart3,
-} from 'lucide-vue-next';
+import { Menu, Search } from 'lucide-vue-next';
 import { computed } from 'vue';
 
 interface Props {
     breadcrumbs?: BreadcrumbItem[];
+    mainNavItems?: NavItem[];
+    rightNavItems?: NavItem[];
 }
 
 const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
+    mainNavItems: () => [],
+    rightNavItems: () => [],
 });
 
 const page = usePage();
 const auth = computed(() => page.props.auth);
+const mainNavItems = computed(() => props.mainNavItems);
+const rightNavItems = computed(() => props.rightNavItems);
 
 const isCurrentRoute = computed(
     () => (url: NonNullable<InertiaLinkProps['href']>) =>
@@ -69,47 +65,6 @@ const activeItemStyles = computed(
             ? 'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100'
             : '',
 );
-
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Home',
-        href: home(),
-        icon: LayoutGrid,
-    },
-    {
-        title: 'Catalog',
-        href: home(),
-        icon: GraduationCap,
-    },
-    {
-        title: 'Student Dashboard',
-        href: '/student',
-        icon: User,
-    },
-    {
-        title: 'Instructor Dashboard',
-        href: '/instructor',
-        icon: BarChart3,
-    },
-    {
-        title: 'Users',
-        href: '/users',
-        icon: Users,
-    },
-];
-
-const rightNavItems: NavItem[] = [
-    {
-        title: 'Repository',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
 </script>
 
 <template>
@@ -178,7 +133,7 @@ const rightNavItems: NavItem[] = [
                     </Sheet>
                 </div>
 
-                <Link :href="dashboard()" class="flex items-center gap-x-2">
+                <Link href="/" class="flex items-center gap-x-2">
                     <AppLogo />
                 </Link>
 
@@ -267,7 +222,7 @@ const rightNavItems: NavItem[] = [
                         </div>
                     </div>
 
-                    <DropdownMenu>
+                    <DropdownMenu v-if="auth.user">
                         <DropdownMenuTrigger :as-child="true">
                             <Button
                                 variant="ghost"
@@ -294,6 +249,22 @@ const rightNavItems: NavItem[] = [
                             <UserMenuContent :user="auth.user" />
                         </DropdownMenuContent>
                     </DropdownMenu>
+                    <div v-else class="hidden lg:flex">
+                        <Link
+                            :href="login().url"
+                            class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent"
+                            :class="activeItemStyles(page.url)"
+                        >
+                            Login
+                        </Link>
+                        <Link
+                            :href="register().url"
+                            class="flex items-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent"
+                            :class="activeItemStyles(page.url)"
+                        >
+                            Register
+                        </Link>
+                    </div>
                 </div>
             </div>
         </div>

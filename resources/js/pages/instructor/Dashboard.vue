@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import InstructorLayout from '@/layouts/InstructorLayout.vue';
-import { dashboard } from '@/routes';
 import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/vue3';
 import {
@@ -107,7 +106,7 @@ const recentEnrollments: Enrollment[] = [
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: dashboard().url,
+        href: '/teacher/dashboard',
     },
 ];
 </script>

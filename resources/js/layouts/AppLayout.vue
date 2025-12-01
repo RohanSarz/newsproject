@@ -1,18 +1,27 @@
 <script setup lang="ts">
-import AppLayout from '@/layouts/app/AppHeaderLayout.vue';
-import type { BreadcrumbItemType } from '@/types';
+import { defaultNavItems } from '@/config/navigation';
+import Layout from '@/layouts/app/MainLayout.vue';
+import type { BreadcrumbItemType, NavItem } from '@/types';
 
 interface Props {
     breadcrumbs?: BreadcrumbItemType[];
+    mainNavItems?: NavItem[];
+    footerNavItems?: NavItem[];
 }
 
 withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
+    mainNavItems: () => [...defaultNavItems],
+    footerNavItems: () => [],
 });
 </script>
 
 <template>
-    <AppLayout :breadcrumbs="breadcrumbs">
+    <Layout
+        :breadcrumbs="breadcrumbs"
+        :mainNavItems="mainNavItems"
+        :footerNavItems="footerNavItems"
+    >
         <slot />
-    </AppLayout>
+    </Layout>
 </template>

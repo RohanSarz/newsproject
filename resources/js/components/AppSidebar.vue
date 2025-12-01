@@ -11,33 +11,22 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
-import instructor from '@/routes/instructor';
-import { type NavItem } from '@/types';
+import { BreadcrumbItem, type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Instructor Dashboard',
-        href: instructor.dashboard().url,
-        icon: LayoutGrid,
-    },
-];
+interface Props {
+    breadcrumbs?: BreadcrumbItem[];
+    mainNavItems?: NavItem[];
+    footerNavItems?: NavItem[];
+}
 
-const footerNavItems: NavItem[] = [
-    {
-        title: 'Github Repo',
-        href: 'https://github.com/laravel/vue-starter-kit',
-        icon: Folder,
-    },
-    {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits#vue',
-        icon: BookOpen,
-    },
-];
+const props = withDefaults(defineProps<Props>(), {
+    mainNavItems: () => [],
+    footerNavItems: () => [],
+});
+const mainNavItems = props.mainNavItems;
+const footerNavItems = props.footerNavItems;
 </script>
 
 <template>
@@ -46,7 +35,7 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
+                        <Link href="#">
                             <AppLogo />
                         </Link>
                     </SidebarMenuButton>

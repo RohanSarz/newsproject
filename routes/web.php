@@ -1,12 +1,13 @@
 <?php
 
+use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Laravel\Fortify\Features;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome', [
+    return Inertia::render('Home', [
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
@@ -23,42 +24,20 @@ Route::get('/courses/{id}', function ($id) {
 })->name('course.show');
 
 // Student dashboard routes
-Route::prefix('student')->middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('StudentDashboard');
-    })->name('student.dashboard');
-
-    Route::get('/courses', function () {
-        return Inertia::render('StudentDashboard');
-    })->name('student.courses');
-
-    Route::get('/schedule', function () {
-        return Inertia::render('StudentDashboard');
-    })->name('student.schedule');
-
-    Route::get('/community', function () {
-        return Inertia::render('StudentDashboard');
-    })->name('student.community');
-});
+Route::prefix('student')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('/', [StudentController::class, 'index'])->name('student.dashboard');
+    });
 
 // Instructor dashboard routes
-Route::prefix('instructor')->middleware(['auth'])->group(function () {
-    Route::get('/', function () {
-        return Inertia::render('InstructorDashboard');
-    })->name('instructor.dashboard');
-
-    Route::get('/courses', function () {
-        return Inertia::render('InstructorDashboard');
-    })->name('instructor.courses');
-
-    Route::get('/students', function () {
-        return Inertia::render('InstructorDashboard');
-    })->name('instructor.students');
-
-    Route::get('/earnings', function () {
-        return Inertia::render('InstructorDashboard');
-    })->name('instructor.earnings');
-});
+Route::prefix('instructor')
+    ->middleware(['auth'])
+    ->group(function () {
+        Route::get('/', function () {
+            return Inertia::render('instructor/Dashboard');
+        })->name('instructor.dashboard');
+    });
 
 Route::resource('users', UserController::class);
 require __DIR__ . '/settings.php';

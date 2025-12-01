@@ -151,15 +151,13 @@ const announcements: Announcement[] = [
     },
 ];
 
-const currentCourse = ref(courses[0]);
+//const currentCourse = ref(courses[0]);
 const selectedCourse = ref(courses[0]);
 </script>
 
 <template>
     <Head title="Student Dashboard" />
-    <StudentLayout
-        :breadcrumbs="[{ label: 'Student Dashboard', href: '/student' }]"
-    >
+    <StudentLayout>
         <!-- Dashboard Content -->
         <main class="p-6 md:p-8">
             <header

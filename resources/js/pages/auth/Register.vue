@@ -57,8 +57,8 @@ import { Form, Head } from '@inertiajs/vue3';
                         <SelectContent class="w-full">
                             <SelectGroup>
                                 <SelectLabel>Roles</SelectLabel>
-                                <SelectItem value="teacher">
-                                    Teacher
+                                <SelectItem value="instructor">
+                                    Instructor
                                 </SelectItem>
                                 <SelectItem value="student">
                                     Student
