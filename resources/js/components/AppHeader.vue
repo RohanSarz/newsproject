@@ -49,10 +49,11 @@ const props = withDefaults(defineProps<Props>(), {
     rightNavItems: () => [],
 });
 
+const { mainNavItems, rightNavItems, breadcrumbs } = props;
+
 const page = usePage();
-const auth = computed(() => page.props.auth);
-const mainNavItems = computed(() => props.mainNavItems);
-const rightNavItems = computed(() => props.rightNavItems);
+
+const auth = page.props.auth;
 
 const isCurrentRoute = computed(
     () => (url: NonNullable<InertiaLinkProps['href']>) =>
@@ -200,7 +201,7 @@ const activeItemStyles = computed(
                                             >
                                                 <a
                                                     :href="toUrl(item.href)"
-                                                    target="_blank"
+                                                    
                                                     rel="noopener noreferrer"
                                                 >
                                                     <span class="sr-only">{{

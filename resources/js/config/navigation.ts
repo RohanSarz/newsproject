@@ -1,12 +1,17 @@
 import { home } from '@/routes';
+
+import instructor from '@/routes/instructor';
 import student from '@/routes/student';
+
 import {
-    BookOpen,
-    Calendar,
+    CornerDownLeft,
+    CornerDownRight,
+    CornerUpLeft,
+    Grid2X2Plus,
+    Home,
     LayoutGrid,
+    LibraryBig,
     Settings,
-    UserCircle,
-    Users,
 } from 'lucide-vue-next';
 
 export const defaultNavItems = [
@@ -18,6 +23,7 @@ export const defaultNavItems = [
 ];
 
 export const studentMainNavItems = [
+    //no icons change later
     {
         title: 'Home',
         href: home().url,
@@ -26,14 +32,23 @@ export const studentMainNavItems = [
         title: 'Dashboard',
         href: student.dashboard().url,
     },
-    { title: 'Courses', href: '/student/courses' },
-    { title: 'Schedule', href: '/student/schedule' },
-    { title: 'Community', href: '/student/community' },
+    {
+        title: 'Student1',
+        href: '/student/courses',
+    },
+    {
+        title: 'student2',
+        href: '/student/schedule',
+    },
+    {
+        title: 'student3',
+        href: '/student/community',
+    },
 ];
 
 export const studentRightNavItems = [
-    { title: 'Profile', href: '/student/profile', icon: UserCircle },
-    { title: 'Settings', href: '/student/settings', icon: Settings },
+    { title: 'Dashboard', href: student.dashboard().url, icon: LibraryBig },
+    //{ title: 'Settings', href: student.dashboard().url, icon: Settings },
 ];
 
 export const studentBreadcrumbs = [
@@ -42,23 +57,30 @@ export const studentBreadcrumbs = [
 
 export const instructorMainNavItems = [
     {
-        title: 'Home',
-        href: '/',
-        icon: LayoutGrid,
+        title: 'Dashboard',
+        href: instructor.dashboard().url,
+        icon: Grid2X2Plus,
     },
     {
-        title: 'Dashboard',
-        href: '/instructor/dashboard',
-        icon: LayoutGrid,
+        title: 'Instructor1',
+        href: '/instructor/courses',
+        icon: CornerUpLeft,
     },
-    { title: 'Courses', href: '/instructor/courses', icon: BookOpen },
-    { title: 'Schedule', href: '/instructor/schedule', icon: Calendar },
-    { title: 'Community', href: '/instructor/community', icon: Users },
+    {
+        title: 'Instructor2',
+        href: '/instructor/schedule',
+        icon: CornerDownLeft,
+    },
+    {
+        title: 'Instructor3',
+        href: '/instructor/community',
+        icon: CornerDownRight,
+    },
 ];
 
 export const instructorFooterNavItems = [
-    { title: 'Profile', href: '/instructor/profile', icon: UserCircle },
-    { title: 'Settings', href: '/instructor/settings', icon: Settings },
+    { title: 'Home', href: home().url, icon: Home },
+    { title: 'Settings', href: instructor.settings().url, icon: Settings },
 ];
 
 export const instructorBreadcrumbs = [

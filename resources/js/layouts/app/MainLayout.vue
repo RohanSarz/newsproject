@@ -15,18 +15,12 @@ const props = withDefaults(defineProps<Props>(), {
     mainNavItems: () => [],
     rightNavItems: () => [],
 });
-const mainNavItems = props.mainNavItems;
-const rightNavItems = props.rightNavItems;
-const breadcrumbs = props.breadcrumbs;
+const { mainNavItems, breadcrumbs } = props;
 </script>
 
 <template>
     <AppShell class="flex-col">
-        <AppHeader
-            :breadcrumbs="breadcrumbs"
-            :mainNavItems="mainNavItems"
-            :rightNavItems="rightNavItems"
-        />
+        <AppHeader :breadcrumbs="breadcrumbs" :mainNavItems="mainNavItems" />
         <AppContent>
             <slot />
         </AppContent>

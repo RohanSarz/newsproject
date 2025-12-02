@@ -37,6 +37,9 @@ Route::prefix('instructor')
         Route::get('/', function () {
             return Inertia::render('instructor/Dashboard');
         })->name('instructor.dashboard');
+        Route::get('/settings', function () {
+            return Inertia::render('settings/Profile');
+        })->name('instructor.settings');
     });
 
 Route::resource('users', UserController::class);

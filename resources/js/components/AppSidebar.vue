@@ -25,8 +25,7 @@ const props = withDefaults(defineProps<Props>(), {
     mainNavItems: () => [],
     footerNavItems: () => [],
 });
-const mainNavItems = props.mainNavItems;
-const footerNavItems = props.footerNavItems;
+const { mainNavItems, footerNavItems } = props;
 </script>
 
 <template>

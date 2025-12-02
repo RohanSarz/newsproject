@@ -1,27 +1,61 @@
 <script setup lang="ts">
-import { defaultNavItems } from '@/config/navigation';
-import Layout from '@/layouts/app/MainLayout.vue';
+import {
+    defaultNavItems,
+    instructorFooterNavItems,
+    instructorMainNavItems,
+    studentMainNavItems,
+    studentRightNavItems,
+} from '@/config/navigation';
+import MainLayout from '@/layouts/app/MainLayout.vue';
 import type { BreadcrumbItemType, NavItem } from '@/types';
+import { usePage } from '@inertiajs/vue3';
+import { toReactive } from '@vueuse/core';
 
 interface Props {
     breadcrumbs?: BreadcrumbItemType[];
     mainNavItems?: NavItem[];
     footerNavItems?: NavItem[];
+    rightNavItems?: NavItem[];
 }
+const page = usePage();
 
-withDefaults(defineProps<Props>(), {
+const user = page.props.auth;
+
+const getMainNavItemsByRole = () => {
+    const navLinks =
+        user.role === 'student'
+            ? studentMainNavItems
+            : user.role === 'instructor'
+              ? instructorMainNavItems
+              : defaultNavItems;
+    return navLinks;
+};
+const getFooterOrRightNavItemsByRole = () => {
+    const navLinks =
+        user.role === 'student'
+            ? studentRightNavItems
+            : user.role === 'instructor'
+              ? instructorFooterNavItems
+              : defaultNavItems;
+    return navLinks;
+};
+const props = withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
-    mainNavItems: () => [...defaultNavItems],
+    mainNavItems: () => [],
     footerNavItems: () => [],
+    rightNavItems: () => [],
 });
+
+const { breadcrumbs } = toReactive(props);
 </script>
 
 <template>
-    <Layout
+    <MainLayout
         :breadcrumbs="breadcrumbs"
-        :mainNavItems="mainNavItems"
-        :footerNavItems="footerNavItems"
+        :mainNavItems="getMainNavItemsByRole()"
+        :rightNavItems="getFooterOrRightNavItemsByRole()"
+        :footerNavItems="getFooterOrRightNavItemsByRole"
     >
         <slot />
-    </Layout>
+    </MainLayout>
 </template>

@@ -99,8 +99,8 @@ const role = page.props.auth.role;
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>User Type</SelectLabel>
-                                    <SelectItem value="teacher">
-                                        Teacher
+                                    <SelectItem value="instructor">
+                                        Instructor
                                     </SelectItem>
                                     <SelectItem value="student">
                                         Student
