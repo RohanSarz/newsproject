@@ -54,7 +54,7 @@ const { breadcrumbs } = toReactive(props);
         :breadcrumbs="breadcrumbs"
         :mainNavItems="getMainNavItemsByRole()"
         :rightNavItems="getFooterOrRightNavItemsByRole()"
-        :footerNavItems="getFooterOrRightNavItemsByRole"
+        :footerNavItems="getFooterOrRightNavItemsByRole()"
     >
         <slot />
     </MainLayout>
