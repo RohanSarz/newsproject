@@ -24,10 +24,7 @@ export const defaultNavItems = [
 
 export const studentMainNavItems = [
     //no icons change later
-    {
-        title: 'Home',
-        href: home().url,
-    },
+
     {
         title: 'Dashboard',
         href: student.dashboard().url,

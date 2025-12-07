@@ -44,12 +44,8 @@ class User extends Authenticatable
 
     protected static function booted()
     {
-        static::created(function (User $user) {
-            // Only assign if no roles yet (safe for admin creation too)
-            if ($user->roles->isEmpty()) {
-                $user->syncRoles('student');
-            }
-        });
+        // Remove automatic role assignment to prevent security issues
+        // Roles should be explicitly assigned during user creation
     }
 
     public function getRoles()

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InstructorController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -25,21 +26,17 @@ Route::get('/courses/{id}', function ($id) {
 
 // Student dashboard routes
 Route::prefix('student')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'role:student'])
     ->group(function () {
         Route::get('/dashboard', [StudentController::class, 'index'])->name('student.dashboard');
     });
 
 // Instructor dashboard routes
 Route::prefix('instructor')
-    ->middleware(['auth'])
+    ->middleware(['auth', 'role:instructor'])
     ->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('instructor/Dashboard');
-        })->name('instructor.dashboard');
-        Route::get('/settings', function () {
-            return Inertia::render('settings/Profile');
-        })->name('instructor.settings');
+        Route::get('/dashboard', [InstructorController::class, 'index'])->name('instructor.dashboard');
+        Route::get('/settings')->name('instructor.settings');
     });
 
 Route::resource('users', UserController::class);

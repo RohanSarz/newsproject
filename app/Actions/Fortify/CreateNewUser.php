@@ -31,7 +31,10 @@ class CreateNewUser implements CreatesNewUsers
             'email' => $input['email'],
             'password' => $input['password'],
         ]);
-        $user->syncRoles($input['roles']);
+
+        // Assign role if provided, otherwise default to 'student'
+        $role = $input['roles'] ?? 'student';
+        $user->syncRoles([$role]);
 
         return $user;
     }

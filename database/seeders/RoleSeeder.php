@@ -14,16 +14,19 @@ class RoleSeeder extends Seeder
     public function run(): void
     {
         $admin = Role::findOrCreate('admin');
+        $moderator = Role::findOrCreate('moderator');
         $instructor = Role::findOrCreate('instructor');
         $student = Role::findOrCreate('student');
 
-        $permissions = ['manage_users', 'manage_course', 'create_course', 'edit_course', 'delete_course', 'view_course', 'enroll_course'];
+        $permissions = ['manage_users', 'manage_roles', 'create_course', 'edit_course', 'view_course', 'delete_course', 'create_lesson', 'edit_lesson', 'view_lesson', 'delete_lesson', 'enroll_lesson', 'enroll_course'];
         foreach ($permissions as $permission) {
             Permission::findOrCreate($permission);
         }
 
+
         $admin->givePermissionTo($permissions);
-        $instructor->givePermissionTo(['create_course', 'edit_course', 'delete_course', 'view_course', 'manage_course']);
+        $moderator->givePermissionTo(['manage_users', 'manage_roles']);
+        $instructor->givePermissionTo(['create_course', 'edit_course', 'view_course', 'delete_course', 'create_lesson', 'edit_lesson', 'view_lesson', 'delete_lesson']);
         $student->givePermissionTo(['view_course', 'enroll_course']);
     }
 }

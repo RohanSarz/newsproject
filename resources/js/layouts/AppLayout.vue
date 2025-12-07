@@ -25,12 +25,18 @@ const user = page.props.auth;
 const getMainNavItemsByRole = () => {
     let navLinks: NavItem[] = defaultNavItems;
 
-    if (user) {
+    if (user.role?.includes('admin')) {
+        navLinks = [
+            ...defaultNavItems,
+            ...studentMainNavItems,
+            ...instructorMainNavItems,
+        ];
+    } else if (user) {
         navLinks =
             user.role === 'student'
-                ? studentMainNavItems
+                ? [...defaultNavItems, ...studentMainNavItems]
                 : user.role === 'instructor'
-                  ? instructorMainNavItems
+                  ? [...defaultNavItems, ...instructorMainNavItems]
                   : defaultNavItems;
     }
 
