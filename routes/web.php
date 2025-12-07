@@ -27,14 +27,14 @@ Route::get('/courses/{id}', function ($id) {
 Route::prefix('student')
     ->middleware(['auth'])
     ->group(function () {
-        Route::get('/', [StudentController::class, 'index'])->name('student.dashboard');
+        Route::get('/dashboard', [StudentController::class, 'index'])->name('student.dashboard');
     });
 
 // Instructor dashboard routes
 Route::prefix('instructor')
     ->middleware(['auth'])
     ->group(function () {
-        Route::get('/', function () {
+        Route::get('/dashboard', function () {
             return Inertia::render('instructor/Dashboard');
         })->name('instructor.dashboard');
         Route::get('/settings', function () {

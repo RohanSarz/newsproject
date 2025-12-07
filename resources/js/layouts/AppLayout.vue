@@ -17,17 +17,23 @@ interface Props {
     footerNavItems?: NavItem[];
     rightNavItems?: NavItem[];
 }
+
 const page = usePage();
 
 const user = page.props.auth;
 
 const getMainNavItemsByRole = () => {
-    const navLinks =
-        user.role === 'student'
-            ? studentMainNavItems
-            : user.role === 'instructor'
-              ? instructorMainNavItems
-              : defaultNavItems;
+    let navLinks: NavItem[] = defaultNavItems;
+
+    if (user) {
+        navLinks =
+            user.role === 'student'
+                ? studentMainNavItems
+                : user.role === 'instructor'
+                  ? instructorMainNavItems
+                  : defaultNavItems;
+    }
+
     return navLinks;
 };
 const getFooterOrRightNavItemsByRole = () => {
@@ -36,7 +42,7 @@ const getFooterOrRightNavItemsByRole = () => {
             ? studentRightNavItems
             : user.role === 'instructor'
               ? instructorFooterNavItems
-              : defaultNavItems;
+              : [];
     return navLinks;
 };
 const props = withDefaults(defineProps<Props>(), {
