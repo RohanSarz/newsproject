@@ -214,13 +214,7 @@ class LessonController extends Controller
             abort(403, 'You must enroll in this course first.');
         }
 
-        // Check if lesson is available (published and publish date passed)
-        if (!$lesson->isAvailable()) {
-            return redirect()->route('student.courses.learn', $course->slug)->with('info', sprintf(
-                'This lesson will be available on %s.',
-                $lesson->published_at ? $lesson->published_at->format('F j, Y \a\t g:i A') : 'soon'
-            ));
-        }
+        // Removed availability check - show all lessons
 
         $enrollment = Enrollment::where('user_id', $user->id)
             ->where('course_id', $course->id)

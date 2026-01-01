@@ -101,8 +101,18 @@ onMounted(() => {
 const youtubeId = computed(() => {
     if (!currentLesson.video_url) return null;
 
+    // Handle various YouTube URL formats:
+    // - youtube.com/watch?v=ID
+    // - youtube.com/embed/ID
+    // - youtube.com/shorts/ID
+    // - youtu.be/ID
+    // - Just the ID (if stored directly)
     const patterns = [
-        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([^&\n?#]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/watch\?v=([^&\n?#]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/embed\/([^&\n?#]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtube\.com\/shorts\/([^&\n?#]+)/,
+        /(?:https?:\/\/)?(?:www\.)?youtu\.be\/([^&\n?#]+)/,
+        /^([a-zA-Z0-9_-]{11})$/, // Direct ID match (11 character YouTube ID)
     ];
 
     for (const pattern of patterns) {
@@ -110,21 +120,12 @@ const youtubeId = computed(() => {
         if (match) return match[1];
     }
 
+    console.warn('Could not extract YouTube ID from URL:', currentLesson.video_url);
     return null;
 });
 
 const isLessonAvailable = (lesson: Lesson) => {
-    // Preview lessons are always available
-    if (lesson.is_preview) return true;
-
-    // Must be published
-    if (!lesson.is_published) return false;
-
-    // Check if published_at has passed
-    if (lesson.published_at) {
-        return new Date(lesson.published_at) <= new Date();
-    }
-
+    // Show all lessons regardless of published status
     return true;
 };
 
@@ -231,14 +232,7 @@ const formatDuration = (seconds: number) => {
 };
 
 const getAvailabilityText = (lesson: Lesson) => {
-    if (lesson.is_preview) return '';
-    if (!lesson.is_published) return 'Draft';
-    if (lesson.published_at) {
-        const date = new Date(lesson.published_at);
-        if (date > new Date()) {
-            return `Available ${date.toLocaleDateString()}`;
-        }
-    }
+    // Show all lessons as available
     return '';
 };
 </script>

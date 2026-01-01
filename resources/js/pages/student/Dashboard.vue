@@ -109,22 +109,24 @@ const completedThisWeek = computed(() => {
     oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
     enrollments.forEach((enrollment) => {
-        enrollment.course.modules.forEach((module) => {
-            if (module.lessons && module.lessons.length > 0) {
-                module.lessons.forEach((lesson) => {
-                    if (
-                        lesson.lesson_progress &&
-                        lesson.lesson_progress[0]?.completed &&
-                        lesson.lesson_progress[0]?.completed_at
-                    ) {
-                        const completedDate = new Date(lesson.lesson_progress[0].completed_at);
-                        if (completedDate >= oneWeekAgo) {
-                            count++;
+        if (enrollment.course?.modules) {
+            enrollment.course.modules.forEach((module) => {
+                if (module.lessons && module.lessons.length > 0) {
+                    module.lessons.forEach((lesson) => {
+                        if (
+                            lesson.lesson_progress &&
+                            lesson.lesson_progress[0]?.completed &&
+                            lesson.lesson_progress[0]?.completed_at
+                        ) {
+                            const completedDate = new Date(lesson.lesson_progress[0].completed_at);
+                            if (completedDate >= oneWeekAgo) {
+                                count++;
+                            }
                         }
-                    }
-                });
-            }
-        });
+                    });
+                }
+            });
+        }
     });
 
     return count;
@@ -149,10 +151,12 @@ const getTimeUntil = (dateString: string) => {
 };
 
 const getTotalLessons = (course: Course) => {
+    if (!course?.modules) return 0;
     return course.modules.reduce((sum, module) => sum + module.lessons.length, 0);
 };
 
 const getCompletedLessons = (course: Course) => {
+    if (!course?.modules) return 0;
     return course.modules.reduce((sum, module) => {
         return (
             sum +
@@ -164,6 +168,7 @@ const getCompletedLessons = (course: Course) => {
 };
 
 const getCurrentModule = (enrollment: Enrollment) => {
+    if (!enrollment.course?.modules) return 'Introduction';
     // Find the first incomplete module
     for (const module of enrollment.course.modules) {
         if (module.lessons && module.lessons.length > 0) {
@@ -309,7 +314,7 @@ const formatHours = (seconds: number) => {
                     </h2>
 
                     <div
-                        v-if="currentCourse"
+                        v-if="currentCourse?.course"
                         class="mb-8 rounded-xl border border-gray-200 bg-white p-6"
                     >
                         <div class="flex flex-col gap-6 sm:flex-row">
@@ -358,6 +363,7 @@ const formatHours = (seconds: number) => {
 
                                 <div class="mt-4 flex gap-3">
                                     <Link
+                                        v-if="currentCourse.course.slug"
                                         :href="studentRoutes.learn({ course: currentCourse.course.slug }).url"
                                         class="flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white hover:bg-gray-800"
                                     >
@@ -444,7 +450,7 @@ const formatHours = (seconds: number) => {
 
                     <div class="space-y-4">
                         <div
-                            v-for="enrollment in enrollments"
+                            v-for="enrollment in enrollments.filter(e => e.course)"
                             :key="enrollment.id"
                             class="rounded-lg border border-gray-200 bg-white p-4 transition-shadow hover:shadow-md"
                         >
@@ -456,6 +462,7 @@ const formatHours = (seconds: number) => {
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <Link
+                                        v-if="enrollment.course?.slug"
                                         :href="studentRoutes.learn({ course: enrollment.course.slug }).url"
                                         class="block"
                                     >

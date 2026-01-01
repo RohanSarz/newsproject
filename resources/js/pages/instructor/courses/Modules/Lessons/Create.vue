@@ -61,7 +61,7 @@ const videoPreview = ref<HTMLIFrameElement | null>(null);
 const submitForm = () => {
   errors.value = {};
   
-  router.post(`/instructor/courses/${course.id}/modules/${module.id}/lessons`, {
+  router.post(`/instructor/courses/${course.slug}/modules/${module.id}/lessons`, {
     title: formData.value.title,
     description: formData.value.description,
     content: formData.value.content,
@@ -77,7 +77,7 @@ const submitForm = () => {
     },
     onSuccess: () => {
       // Redirect to lessons index on success
-      router.visit(`/instructor/courses/${course.id}/modules/${module.id}/lessons`);
+      router.visit(`/instructor/courses/${course.slug}/modules/${module.id}/lessons`);
     }
   });
 };
@@ -116,10 +116,10 @@ const updateDuration = () => {
       { title: 'Home', href: '/' },
       { title: 'Instructor Dashboard', href: '/instructor/dashboard' },
       { title: 'Courses', href: '/instructor/courses' },
-      { title: course.title, href: `/instructor/courses/${course.id}` },
-      { title: module.title, href: `/instructor/courses/${course.id}/modules/${module.id}` },
-      { title: 'Lessons', href: `/instructor/courses/${course.id}/modules/${module.id}/lessons` },
-      { title: 'Create', href: `/instructor/courses/${course.id}/modules/${module.id}/lessons/create` }
+      { title: course.title, href: `/instructor/courses/${course.slug}` },
+      { title: module.title, href: `/instructor/courses/${course.slug}/modules/${module.id}` },
+      { title: 'Lessons', href: `/instructor/courses/${course.slug}/modules/${module.id}/lessons` },
+      { title: 'Create', href: `/instructor/courses/${course.slug}/modules/${module.id}/lessons/create` }
     ]"
   >
     <Head :title="`Create Lesson - ${module.title}`" />
@@ -270,7 +270,7 @@ const updateDuration = () => {
 
           <div class="flex justify-end space-x-4 pt-4">
             <Button variant="outline" as-child>
-              <a :href="`/instructor/courses/${course.id}/modules/${module.id}/lessons`">Cancel</a>
+              <a :href="`/instructor/courses/${course.slug}/modules/${module.id}/lessons`">Cancel</a>
             </Button>
             <Button @click="submitForm">
               <Play class="h-4 w-4 mr-2" />

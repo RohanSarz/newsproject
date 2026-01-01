@@ -99,12 +99,14 @@ const getStatusColor = (enrollment: Enrollment) => {
 };
 
 const totalLessons = (course: Course) => {
+    if (!course?.modules) return 0;
     return course.modules.reduce((sum, module) => {
         return sum + (module.lessons ? module.lessons.length : 0);
     }, 0);
 };
 
 const completedLessons = (course: Course) => {
+    if (!course?.modules) return 0;
     return course.modules.reduce((sum, module) => {
         return (
             sum +
@@ -116,6 +118,7 @@ const completedLessons = (course: Course) => {
 };
 
 const firstIncompleteLesson = (course: Course) => {
+    if (!course?.modules) return null;
     for (const module of course.modules) {
         if (module.lessons) {
             for (const lesson of module.lessons) {
@@ -146,7 +149,7 @@ const firstIncompleteLesson = (course: Course) => {
             <!-- Courses Grid -->
             <div v-if="enrollments.data.length > 0" class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 <Card
-                    v-for="enrollment in enrollments.data"
+                    v-for="enrollment in enrollments.data.filter(e => e.course)"
                     :key="enrollment.id"
                     class="group overflow-hidden transition-all hover:shadow-lg"
                 >
@@ -189,16 +192,20 @@ const firstIncompleteLesson = (course: Course) => {
                         <!-- Title -->
                         <h3 class="mb-2 text-lg font-semibold text-gray-900">
                             <Link
+                                v-if="enrollment.course?.slug"
                                 :href="studentRoutes.learn({ course: enrollment.course.slug }).url"
                                 class="hover:text-blue-600 transition-colors"
                             >
                                 {{ enrollment.course.title }}
                             </Link>
+                            <span v-else class="text-gray-900">
+                                {{ enrollment.course?.title }}
+                            </span>
                         </h3>
 
                         <!-- Description -->
                         <p class="mb-4 line-clamp-2 text-sm text-gray-600">
-                            {{ enrollment.course.description }}
+                            {{ enrollment.course?.description }}
                         </p>
 
                         <!-- Status Badge -->
@@ -215,6 +222,7 @@ const firstIncompleteLesson = (course: Course) => {
 
                         <!-- Continue/Start Button -->
                         <Link
+                            v-if="enrollment.course?.slug"
                             :href="studentRoutes.learn({ course: enrollment.course.slug }).url"
                             class="flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-gray-800"
                         >
