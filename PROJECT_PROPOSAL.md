@@ -19,7 +19,7 @@ In today's digital age, traditional education systems face challenges in reachin
 **Proposed Solution:**
 Spattie LMS is a web-based Learning Management System designed to bridge the gap between educators and learners. The platform provides a robust infrastructure for course creation, content delivery, student enrollment, progress tracking, and comprehensive administration through an intuitive interface.
 
-**Project Duration:** 1 Month  (Development Phase)
+**Project Duration:** 1 Month (Development Phase)
 
 ---
 
@@ -382,16 +382,10 @@ With proper execution and continuous improvement, Spattie LMS can evolve into a 
 
 ---
 
-**Project Supervisor:** [Supervisor Name]
 **Department:** Computer Science and Engineering
 **Institution:** Mangrove Institute of Science and Technology
 
 **Project Prepared By:**
 _Kazi Sazzad Hossain Rohan_
-8th Semester, Computer Science
-Mangrove Institute of Science and Technology
-
----
-
-**Document Version:** 1.0
-**Date:** January 1, 2026
+**Board Role**
+_638048_
