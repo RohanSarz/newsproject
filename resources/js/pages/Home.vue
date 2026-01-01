@@ -5,7 +5,6 @@ import { home } from '@/routes';
 import {
     ArrowRight,
     BookOpen,
-    Check,
     Star,
     Clock,
     Server,
@@ -47,28 +46,35 @@ const getCategoryIcon = (index: number) => {
     return icons[index % icons.length];
 };
 
-const selectedTopics = ref<string[]>([]);
 const selectedLevel = ref<string>('');
-const sortBy = ref<string>('newest');
-
-const toggleTopic = (topic: string) => {
-    if (selectedTopics.value.includes(topic)) {
-        selectedTopics.value = selectedTopics.value.filter((t) => t !== topic);
-    } else {
-        selectedTopics.value.push(topic);
-    }
-};
+const sortBy = ref<string>('Newest');
 
 const selectLevel = (level: string) => {
-    selectedLevel.value = selectedLevel === level ? '' : level;
+    selectedLevel.value = selectedLevel.value === level ? '' : level;
 };
 
 const filterCourses = () => {
     return courses.filter((course) => {
-        if (selectedLevel.value && course.level !== selectedLevel.value) {
+        // Filter by level - convert to lowercase for comparison
+        const courseLevel = course.level.toLowerCase();
+        const selectedLevelLower = selectedLevel.value.toLowerCase();
+        if (selectedLevel.value && courseLevel !== selectedLevelLower) {
             return false;
         }
+
         return true;
+    }).sort((a, b) => {
+        // Sort courses based on sortBy selection
+        switch (sortBy.value) {
+            case 'Most Popular':
+                // Assuming price as popularity indicator (you might want to use actual popularity data)
+                return b.price - a.price;
+            case 'Price: Low to High':
+                return a.price - b.price;
+            case 'Newest':
+            default:
+                return b.id - a.id; // Assuming higher ID = newer
+        }
     });
 };
 
@@ -145,91 +151,6 @@ const courseRoutes = {
             <div class="flex flex-col gap-8 md:flex-row md:gap-12">
                 <!-- Sidebar Filters (Horizontal on mobile) -->
                 <div class="w-full flex-shrink-0 space-y-8 md:w-64">
-                    <div>
-                        <h3
-                            class="mb-4 text-sm font-semibold tracking-tight text-gray-900"
-                        >
-                            Topics
-                        </h3>
-                        <div
-                            class="flex flex-wrap gap-x-6 gap-y-2.5 md:flex-col"
-                        >
-                            <label
-                                class="group flex cursor-pointer items-center gap-3"
-                            >
-                                <div class="relative flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        class="peer h-4 w-4 appearance-none rounded border border-gray-300 bg-white transition-all checked:border-gray-900 checked:bg-gray-900"
-                                        :checked="
-                                            selectedTopics.includes(
-                                                'Frontend Engineering',
-                                            )
-                                        "
-                                        @change="
-                                            toggleTopic('Frontend Engineering')
-                                        "
-                                    />
-                                    <Check
-                                        class="pointer-events-none absolute inset-0 m-auto h-3 w-3 text-white opacity-0 peer-checked:opacity-100"
-                                    />
-                                </div>
-                                <span
-                                    class="text-sm text-gray-600 group-hover:text-gray-900"
-                                >
-                                    Frontend Engineering
-                                </span>
-                            </label>
-                            <label
-                                class="group flex cursor-pointer items-center gap-3"
-                            >
-                                <div class="relative flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        class="peer h-4 w-4 appearance-none rounded border border-gray-300 bg-white transition-all checked:border-gray-900 checked:bg-gray-900"
-                                        :checked="
-                                            selectedTopics.includes(
-                                                'Backend Systems',
-                                            )
-                                        "
-                                        @change="toggleTopic('Backend Systems')"
-                                    />
-                                    <Check
-                                        class="pointer-events-none absolute inset-0 m-auto h-3 w-3 text-white opacity-0 peer-checked:opacity-100"
-                                    />
-                                </div>
-                                <span
-                                    class="text-sm text-gray-600 group-hover:text-gray-900"
-                                >
-                                    Backend Systems
-                                </span>
-                            </label>
-                            <label
-                                class="group flex cursor-pointer items-center gap-3"
-                            >
-                                <div class="relative flex items-center">
-                                    <input
-                                        type="checkbox"
-                                        class="peer h-4 w-4 appearance-none rounded border border-gray-300 bg-white transition-all checked:border-gray-900 checked:bg-gray-900"
-                                        :checked="
-                                            selectedTopics.includes(
-                                                'DevOps & Cloud',
-                                            )
-                                        "
-                                        @change="toggleTopic('DevOps & Cloud')"
-                                    />
-                                    <Check
-                                        class="pointer-events-none absolute inset-0 m-auto h-3 w-3 text-white opacity-0 peer-checked:opacity-100"
-                                    />
-                                </div>
-                                <span
-                                    class="text-sm text-gray-600 group-hover:text-gray-900"
-                                >
-                                    DevOps & Cloud
-                                </span>
-                            </label>
-                        </div>
-                    </div>
                     <!-- Hidden on very small screens to save space or collapsible if needed, kept simple for now -->
                     <div class="hidden sm:block">
                         <h3
@@ -321,9 +242,9 @@ const courseRoutes = {
                                 v-model="sortBy"
                                 class="cursor-pointer border-none bg-transparent text-xs font-medium text-gray-900 focus:ring-0"
                             >
-                                <option>Most Popular</option>
-                                <option>Newest</option>
-                                <option>Price: Low to High</option>
+                                <option value="Most Popular">Most Popular</option>
+                                <option value="Newest">Newest</option>
+                                <option value="Price: Low to High">Price: Low to High</option>
                             </select>
                         </div>
                     </div>
