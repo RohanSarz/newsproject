@@ -12,6 +12,10 @@ import {
     LayoutGrid,
     LibraryBig,
     Settings,
+    BookOpen,
+    Calendar,
+    GraduationCap,
+    ShoppingBag,
 } from 'lucide-vue-next';
 
 export const defaultNavItems = [
@@ -22,36 +26,41 @@ export const defaultNavItems = [
     },
 ];
 
+// Student Navigation
 export const studentMainNavItems = [
-    //no icons change later
-
     {
         title: 'Dashboard',
         href: student.dashboard().url,
+        icon: Grid2X2Plus,
     },
     {
-        title: 'Student1',
+        title: 'Course Catalog',
+        href: '/courses',
+        icon: ShoppingBag,
+    },
+    {
+        title: 'My Courses',
         href: '/student/courses',
+        icon: BookOpen,
     },
     {
-        title: 'student2',
+        title: 'Schedule',
         href: '/student/schedule',
-    },
-    {
-        title: 'student3',
-        href: '/student/community',
+        icon: Calendar,
     },
 ];
 
 export const studentRightNavItems = [
-    { title: 'Dashboard', href: student.dashboard().url, icon: LibraryBig },
-    //{ title: 'Settings', href: student.dashboard().url, icon: Settings },
+    { title: 'Dashboard', href: student.dashboard().url, icon: Grid2X2Plus },
+    { title: 'My Courses', href: '/student/courses', icon: BookOpen },
 ];
 
 export const studentBreadcrumbs = [
-    { title: 'Home', href: '/student/dashboard' },
+    { title: 'Home', href: '/' },
+    { title: 'Student Dashboard', href: student.dashboard().url },
 ];
 
+// Instructor Navigation
 export const instructorMainNavItems = [
     {
         title: 'Dashboard',
@@ -59,19 +68,14 @@ export const instructorMainNavItems = [
         icon: Grid2X2Plus,
     },
     {
-        title: 'Instructor1',
-        href: '/instructor/courses',
-        icon: CornerUpLeft,
+        title: 'Courses',
+        href: instructor.courses.index().url,
+        icon: LibraryBig,
     },
     {
-        title: 'Instructor2',
+        title: 'Schedule',
         href: '/instructor/schedule',
-        icon: CornerDownLeft,
-    },
-    {
-        title: 'Instructor3',
-        href: '/instructor/community',
-        icon: CornerDownRight,
+        icon: Calendar,
     },
 ];
 
@@ -81,5 +85,20 @@ export const instructorFooterNavItems = [
 ];
 
 export const instructorBreadcrumbs = [
-    { title: 'Home', href: '/instructor/dashboard' },
+    { title: 'Home', href: '/' },
+    { title: 'Instructor Dashboard', href: instructor.dashboard().url },
+];
+
+// Public Navigation (for course catalog, etc.)
+export const publicMainNavItems = [
+    {
+        title: 'Home',
+        href: home().url,
+        icon: Home,
+    },
+    {
+        title: 'Course Catalog',
+        href: '/courses',
+        icon: LibraryBig,
+    },
 ];

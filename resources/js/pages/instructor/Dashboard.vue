@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InstructorLayout from '@/layouts/InstructorLayout.vue';
 import { BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/vue3';
+import { Head, usePage } from '@inertiajs/vue3';
 import {
     ArrowDownRight,
     ArrowUpRight,
@@ -11,6 +11,7 @@ import {
     Download,
     MessageSquare,
     Users,
+    BookOpen,
 } from 'lucide-vue-next';
 
 interface Stat {
@@ -18,7 +19,6 @@ interface Stat {
     value: string;
     change: string;
     positive: boolean;
-    icon: any;
 }
 
 interface Enrollment {
@@ -28,85 +28,30 @@ interface Enrollment {
     initials: string;
     color: string;
     amount: string;
+    enrolled_at: string;
 }
 
-interface RevenueBar {
-    month: string;
-    value: number;
-    isCurrent: boolean;
+interface CoursePerformance {
+    title: string;
+    enrollments: number;
+    completion_rate: number;
+    avg_rating: number;
+    revenue: number;
 }
 
-const stats: Stat[] = [
-    {
-        title: 'Total Revenue',
-        value: '$12,450',
-        change: '+12.5%',
-        positive: true,
-        icon: DollarSign,
-    },
-    {
-        title: 'Active Students',
-        value: '1,204',
-        change: '+3.2%',
-        positive: true,
-        icon: Users,
-    },
-    {
-        title: 'Course Rating',
-        value: '4.8',
-        change: 'Average of 450 reviews',
-        positive: true,
-        icon: BarChart2,
-    },
-    {
-        title: 'Completion Rate',
-        value: '68%',
-        change: '-1.2%',
-        positive: false,
-        icon: CheckCircle,
-    },
-];
+interface Props {
+    stats: Stat[];
+    recentEnrollments: Enrollment[];
+    coursePerformance: CoursePerformance[];
+}
 
-const revenueData: RevenueBar[] = [
-    { month: 'May', value: 40, isCurrent: false },
-    { month: 'Jun', value: 60, isCurrent: false },
-    { month: 'Jul', value: 35, isCurrent: false },
-    { month: 'Aug', value: 80, isCurrent: false },
-    { month: 'Sep', value: 55, isCurrent: false },
-    { month: 'Oct', value: 90, isCurrent: true },
-];
-
-const recentEnrollments: Enrollment[] = [
-    {
-        id: 1,
-        name: 'John Doe',
-        course: 'Scalable Microservices',
-        initials: 'JD',
-        color: 'purple',
-        amount: '+$49',
-    },
-    {
-        id: 2,
-        name: 'Alice Smith',
-        course: 'React Patterns',
-        initials: 'AS',
-        color: 'blue',
-        amount: '+$59',
-    },
-    {
-        id: 3,
-        name: 'Ben Ross',
-        course: 'PostgreSQL Mastery',
-        initials: 'BR',
-        color: 'yellow',
-        amount: '+$39',
-    },
-];
+const { props } = usePage<Props>();
+const { stats, recentEnrollments, coursePerformance } = props;
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Dashboard',
-        href: '/teacher/dashboard',
+        href: '/instructor/dashboard',
     },
 ];
 </script>
@@ -166,41 +111,60 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </div>
             </div>
 
-            <!-- Visualization Mockup & List -->
+            <!-- Recent Enrollments & Quick Stats -->
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
                 <div
                     class="rounded-xl border border-gray-200 bg-white p-6 shadow-sm lg:col-span-2"
                 >
                     <h3 class="mb-6 text-base font-semibold text-gray-900">
-                        Revenue History
+                        Course Performance
                     </h3>
-                    <!-- Simple CSS Bar Chart -->
-                    <div class="mt-4 flex h-48 items-end gap-2 md:gap-4">
-                        <div
-                            v-for="(bar, index) in revenueData"
-                            :key="index"
-                            class="group relative flex-1 rounded-t-sm bg-gray-100"
-                        >
-                            <div
-                                :class="[
-                                    'absolute bottom-0 w-full rounded-t-sm transition-all group-hover:bg-blue-600',
-                                    bar.isCurrent
-                                        ? 'bg-gray-900'
-                                        : 'bg-blue-500',
-                                ]"
-                                :style="{ height: bar.value + '%' }"
-                            ></div>
-                        </div>
-                    </div>
-                    <div
-                        class="mt-3 flex justify-between text-xs font-medium text-gray-400 uppercase"
-                    >
-                        <span>May</span>
-                        <span>Jun</span>
-                        <span>Jul</span>
-                        <span>Aug</span>
-                        <span>Sep</span>
-                        <span>Oct</span>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead>
+                                <tr
+                                    class="border-b border-gray-200 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
+                                >
+                                    <th class="px-4 pb-3">Course</th>
+                                    <th class="px-4 pb-3">Enrollments</th>
+                                    <th class="px-4 pb-3">Completion</th>
+                                    <th class="px-4 pb-3">Avg. Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr
+                                    v-if="coursePerformance.length > 0"
+                                    v-for="(course, index) in coursePerformance"
+                                    :key="index"
+                                    class="text-sm"
+                                >
+                                    <td class="px-4 py-4 font-medium text-gray-900">
+                                        {{ course.title }}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        {{ course.enrollments }}
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        {{ course.completion_rate }}%
+                                    </td>
+                                    <td class="px-4 py-4">
+                                        <div class="flex items-center gap-1">
+                                            <span v-if="course.avg_rating > 0">{{ course.avg_rating.toFixed(1) }}</span>
+                                            <span v-else class="text-gray-400">—</span>
+                                            <MessageSquare
+                                                v-if="course.avg_rating > 0"
+                                                class="h-3 w-3 fill-yellow-500 text-yellow-500"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr v-else>
+                                    <td colspan="4" class="px-4 py-8 text-center text-sm text-gray-500">
+                                        No courses yet. Start by creating your first course!
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
@@ -212,15 +176,14 @@ const breadcrumbs: BreadcrumbItem[] = [
                             Recent Enrollments
                         </h3>
                     </div>
-                    <div class="divide-y divide-gray-100">
+                    <div v-if="recentEnrollments.length > 0" class="divide-y divide-gray-100">
                         <div
                             v-for="enrollment in recentEnrollments"
                             :key="enrollment.id"
                             class="flex items-center gap-3 p-4 transition-colors hover:bg-gray-50"
                         >
                             <div
-                                class="flex h-8 w-8 items-center justify-center rounded-full"
-                                :class="`bg-${enrollment.color}-100 text-xs font-bold text-${enrollment.color}-600`"
+                                class="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 text-xs font-bold text-blue-600"
                             >
                                 {{ enrollment.initials }}
                             </div>
@@ -239,59 +202,9 @@ const breadcrumbs: BreadcrumbItem[] = [
                             }}</span>
                         </div>
                     </div>
-                    <div
-                        class="border-t border-gray-100 bg-gray-50 p-3 text-center"
-                    >
-                        <button
-                            class="text-xs font-medium text-gray-600 hover:text-gray-900"
-                        >
-                            View all transactions
-                        </button>
+                    <div v-else class="p-8 text-center text-sm text-gray-500">
+                        No enrollments yet
                     </div>
-                </div>
-            </div>
-
-            <!-- Course Performance Section -->
-            <div
-                class="mt-8 rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
-            >
-                <h3 class="mb-6 text-base font-semibold text-gray-900">
-                    Course Performance
-                </h3>
-                <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead>
-                            <tr
-                                class="border-b border-gray-200 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                            >
-                                <th class="px-4 pb-3">Course</th>
-                                <th class="px-4 pb-3">Enrollments</th>
-                                <th class="px-4 pb-3">Completion</th>
-                                <th class="px-4 pb-3">Avg. Rating</th>
-                                <th class="px-4 pb-3">Revenue</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                            <tr v-for="i in 5" :key="i" class="text-sm">
-                                <td class="px-4 py-4 font-medium text-gray-900">
-                                    Course Title {{ i }}
-                                </td>
-                                <td class="px-4 py-4">
-                                    {{ 100 + i * 25 }}
-                                </td>
-                                <td class="px-4 py-4">{{ 65 + i * 5 }}%</td>
-                                <td class="px-4 py-4">
-                                    <div class="flex items-center gap-1">
-                                        <span>4.{{ 5 + i }}</span>
-                                        <MessageSquare
-                                            class="h-3 w-3 fill-yellow-500 text-yellow-500"
-                                        />
-                                    </div>
-                                </td>
-                                <td class="px-4 py-4">${{ 1500 + i * 250 }}</td>
-                            </tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </main>

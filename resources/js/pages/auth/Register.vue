@@ -63,7 +63,6 @@ import { Form, Head } from '@inertiajs/vue3';
                                 <SelectItem value="student">
                                     Student
                                 </SelectItem>
-                                <SelectItem value="admin"> Admin </SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>

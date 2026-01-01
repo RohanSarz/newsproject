@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import AppLayout from '@/layouts/AppLayout.vue';
-import { Head } from '@inertiajs/vue3';
+import { Head, Link } from '@inertiajs/vue3';
+import { home } from '@/routes';
 import {
     ArrowRight,
-    Brain,
+    BookOpen,
     Check,
-    Database,
-    Layout,
-    Server,
-    Shield,
     Star,
+    Clock,
+    Server,
+    Layout,
+    Shield,
     Users,
+    Brain,
 } from 'lucide-vue-next';
 import { ref } from 'vue';
 
@@ -18,99 +20,36 @@ interface Course {
     id: number;
     title: string;
     description: string;
-    instructor: string;
-    initials: string;
-    rating: number;
-    category: string;
-    icon: any;
-    color: string;
-    level: 'beginner' | 'intermediate' | 'advanced';
+    level: string;
+    price: number;
+    slug: string;
+    thumbnail?: string;
+    instructor: {
+        id: number;
+        name: string;
+    };
+    module_count: number;
+    total_lesson_count: number;
 }
 
-const courses: Course[] = [
-    {
-        id: 1,
-        title: 'Scalable Microservices',
-        description:
-            'Learn to build distributed systems that can handle millions of requests.',
-        instructor: 'J. Doe',
-        initials: 'JD',
-        rating: 4.9,
-        category: 'Backend',
-        icon: Server,
-        color: 'from-gray-100 to-gray-200',
-        level: 'intermediate',
-    },
-    {
-        id: 2,
-        title: 'Advanced React Patterns',
-        description:
-            'Master complex React concepts including state management and performance optimization.',
-        instructor: 'A. Smith',
-        initials: 'AS',
-        rating: 4.8,
-        category: 'Frontend',
-        icon: Layout,
-        color: 'from-gray-900 to-gray-800',
-        level: 'advanced',
-    },
-    {
-        id: 3,
-        title: 'PostgreSQL Mastery',
-        description:
-            'Deep dive into PostgreSQL for complex data management and optimization.',
-        instructor: 'B. Johnson',
-        initials: 'BJ',
-        rating: 4.7,
-        category: 'Database',
-        icon: Database,
-        color: 'from-blue-100 to-blue-200',
-        level: 'intermediate',
-    },
-    {
-        id: 4,
-        title: 'Security Best Practices',
-        description:
-            'Implement robust security measures in your applications and infrastructure.',
-        instructor: 'C. Wilson',
-        initials: 'CW',
-        rating: 4.9,
-        category: 'Security',
-        icon: Shield,
-        color: 'from-green-100 to-green-200',
-        level: 'advanced',
-    },
-    {
-        id: 5,
-        title: 'Team Leadership',
-        description:
-            'Develop skills to lead engineering teams and technical projects effectively.',
-        instructor: 'D. Brown',
-        initials: 'DB',
-        rating: 4.6,
-        category: 'Leadership',
-        icon: Users,
-        color: 'from-purple-100 to-purple-200',
-        level: 'intermediate',
-    },
-    {
-        id: 6,
-        title: 'AI for Developers',
-        description:
-            'Leverage artificial intelligence to enhance your development workflow.',
-        instructor: 'E. Davis',
-        initials: 'ED',
-        rating: 4.8,
-        category: 'AI',
-        icon: Brain,
-        color: 'from-yellow-100 to-yellow-200',
-        level: 'beginner',
-    },
-];
+interface Props {
+    featuredCourses?: Course[];
+}
 
-const selectedTopics = ref<string[]>(['Backend Systems']);
-const selectedLevel = ref<string>('Intermediate');
-const sortBy = ref<string>('Most Popular');
+const props = defineProps<Props>();
+
+// Use featured courses from props or empty array
+const courses = props.featuredCourses || [];
+
+const icons = [Server, Layout, Shield, Users, Brain, BookOpen];
+
+const getCategoryIcon = (index: number) => {
+    return icons[index % icons.length];
+};
+
+const selectedTopics = ref<string[]>([]);
+const selectedLevel = ref<string>('');
+const sortBy = ref<string>('newest');
 
 const toggleTopic = (topic: string) => {
     if (selectedTopics.value.includes(topic)) {
@@ -121,15 +60,39 @@ const toggleTopic = (topic: string) => {
 };
 
 const selectLevel = (level: string) => {
-    selectedLevel.value = level;
+    selectedLevel.value = selectedLevel === level ? '' : level;
 };
 
 const filterCourses = () => {
     return courses.filter((course) => {
-        // For simplicity in this example, we just return all courses
-        // In a real app, we would filter based on selectedTopics and selectedLevel
+        if (selectedLevel.value && course.level !== selectedLevel.value) {
+            return false;
+        }
         return true;
     });
+};
+
+const formatPrice = (price: number) => {
+    return price === 0 ? 'Free' : `$${price}`;
+};
+
+const getLevelColor = (level: string) => {
+    switch (level) {
+        case 'beginner':
+            return 'bg-green-100 text-green-800';
+        case 'intermediate':
+            return 'bg-blue-100 text-blue-800';
+        case 'advanced':
+            return 'bg-purple-100 text-purple-800';
+        default:
+            return 'bg-gray-100 text-gray-800';
+    }
+};
+
+// Import route helpers
+const courseRoutes = {
+    catalog: () => ({ url: '/courses' }),
+    detail: (params: { course: string }) => ({ url: `/courses/${params.course}` }),
 };
 </script>
 
@@ -160,17 +123,19 @@ const filterCourses = () => {
                     50,000+ engineers.
                 </p>
                 <div class="flex flex-col justify-center gap-4 sm:flex-row">
-                    <button
+                    <Link
+                        :href="courseRoutes.catalog().url"
                         class="flex items-center justify-center gap-2 rounded-lg bg-gray-900 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all hover:bg-gray-800"
                     >
                         Browse Courses
                         <ArrowRight class="h-4 w-4" />
-                    </button>
-                    <button
+                    </Link>
+                    <Link
+                        :href="courseRoutes.catalog().url"
                         class="flex items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-6 py-3 text-sm font-medium text-gray-800 transition-all hover:bg-gray-50"
                     >
-                        View Syllabus
-                    </button>
+                        View All Courses
+                    </Link>
                 </div>
             </div>
         </div>
@@ -367,24 +332,33 @@ const filterCourses = () => {
                         class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
                     >
                         <!-- Course Card -->
-                        <div
+                        <Link
                             v-for="course in filterCourses()"
                             :key="course.id"
+                            :href="courseRoutes.detail({ course: course.slug }).url"
                             class="group cursor-pointer overflow-hidden rounded-xl border border-gray-300 bg-white transition-all hover:border-gray-300 hover:shadow-md"
                         >
-                            <div
-                                class="relative flex h-40 items-center justify-center bg-gradient-to-br"
-                                :class="course.color"
-                            >
+                            <div class="relative h-40 bg-gradient-to-br from-gray-100 to-gray-200">
+                                <div
+                                    v-if="course.thumbnail"
+                                    class="absolute inset-0 bg-cover bg-center"
+                                    :style="{ backgroundImage: `url(${course.thumbnail})` }"
+                                ></div>
+                                <div
+                                    v-else
+                                    class="flex h-full items-center justify-center"
+                                >
+                                    <component
+                                        :is="getCategoryIcon(course.id)"
+                                        class="h-10 w-10 text-gray-400 transition-transform duration-300 group-hover:scale-110"
+                                    />
+                                </div>
                                 <div
                                     class="absolute top-3 right-3 rounded border border-gray-100 bg-white/90 px-2 py-1 text-[10px] font-semibold tracking-wide text-gray-900 uppercase backdrop-blur"
+                                    :class="getLevelColor(course.level)"
                                 >
-                                    {{ course.category }}
+                                    {{ course.level.charAt(0).toUpperCase() + course.level.slice(1) }}
                                 </div>
-                                <component
-                                    :is="course.icon"
-                                    class="h-10 w-10 text-gray-400 transition-transform duration-300 group-hover:scale-110"
-                                />
                             </div>
                             <div class="p-5">
                                 <h3
@@ -398,31 +372,46 @@ const filterCourses = () => {
                                     {{ course.description }}
                                 </p>
                                 <div
+                                    class="mb-4 flex flex-wrap gap-3 text-xs text-gray-500"
+                                >
+                                    <div class="flex items-center gap-1">
+                                        <BookOpen class="h-3.5 w-3.5" />
+                                        <span>{{ course.module_count }} modules</span>
+                                    </div>
+                                    <div class="flex items-center gap-1">
+                                        <Clock class="h-3.5 w-3.5" />
+                                        <span>{{ course.total_lesson_count }} lessons</span>
+                                    </div>
+                                </div>
+                                <div
                                     class="flex items-center justify-between border-t border-gray-100 pt-4"
                                 >
                                     <div class="flex items-center gap-2">
                                         <div
                                             class="flex h-6 w-6 items-center justify-center rounded-full bg-gray-200 text-[10px] font-bold text-gray-600"
                                         >
-                                            {{ course.initials }}
+                                            {{
+                                                course.instructor.name
+                                                    .split(' ')
+                                                    .map((n: string) => n[0])
+                                                    .join('')
+                                                    .toUpperCase()
+                                            }}
                                         </div>
                                         <span
                                             class="text-xs font-medium text-gray-600"
                                         >
-                                            {{ course.instructor }}
+                                            {{ course.instructor.name }}
                                         </span>
                                     </div>
-                                    <div
-                                        class="flex items-center gap-1 text-xs font-medium text-gray-900"
+                                    <span
+                                        class="text-lg font-bold text-gray-900"
                                     >
-                                        <Star
-                                            class="h-3 w-3 fill-yellow-500 text-yellow-500"
-                                        />
-                                        {{ course.rating }}
-                                    </div>
+                                        {{ formatPrice(course.price) }}
+                                    </span>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     </div>
                 </div>
             </div>

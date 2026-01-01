@@ -52,4 +52,36 @@ class User extends Authenticatable
     {
         return $this->getRoleNames();
     }
+
+    // Enrollment relationships
+    public function enrollments()
+    {
+        return $this->hasMany(Enrollment::class);
+    }
+
+    public function enrolledCourses()
+    {
+        return $this->belongsToMany(Course::class, 'enrollments')
+            ->withPivot('enrolled_at', 'completed_at', 'progress', 'status')
+            ->withTimestamps();
+    }
+
+    public function hasEnrolled($courseId): bool
+    {
+        return $this->enrollments()->where('course_id', $courseId)->exists();
+    }
+
+    public function enroll(Course $course): Enrollment
+    {
+        return $this->enrollments()->create([
+            'course_id' => $course->id,
+            'enrolled_at' => now(),
+        ]);
+    }
+
+    // Instructor relationship (courses they teach)
+    public function courses()
+    {
+        return $this->hasMany(Course::class, 'instructor_id');
+    }
 }
